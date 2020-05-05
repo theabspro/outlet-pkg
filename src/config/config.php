@@ -1,4 +1,4 @@
 <?php
 return [
-	'DEV' => env('OUTLET_PKG', false),
+	'DEV' => env('OUTLET_PKG_DEV', false),
 ];
