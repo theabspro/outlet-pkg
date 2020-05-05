@@ -47,18 +47,14 @@ app.component('shiftList', {
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
-                    d.short_name = $("#short_name").val();
                     d.name = $("#name").val();
-                    d.description = $("#description").val();
                     d.status = $("#status").val();
                 },
             },
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'short_name', name: 'shifts.short_name' },
                 { data: 'name', name: 'shifts.name' },
-                { data: 'description', name: 'shifts.description' },
                 { data: 'status', name: '' },
 
             ],
@@ -76,6 +72,7 @@ app.component('shiftList', {
             $('#search_shift').val('');
             $('#shifts_list').DataTable().search('').draw();
         }
+
         $('.refresh_table').on("click", function() {
             $('#shifts_list').DataTable().ajax.reload();
         });
@@ -128,18 +125,20 @@ app.component('shiftList', {
                 $mdSelect.hide();
             }
         });
-        $('#short_name').on('keyup', function() {
+        // $('#name').on('keyup', function() {
+        //     dataTables.fnFilter();
+        // });
+        // $scope.onSelectedStatus = function(id) {
+        //     $('#status').val(id);
+        //     dataTables.fnFilter();
+        // }
+        $scope.applyFilter = function() {
+            $('#status').val(self.status);
             dataTables.fnFilter();
-        });
-        $('#name').on('keyup', function() {
-            dataTables.fnFilter();
-        });
-        $scope.onSelectedStatus = function(id) {
-            $('#status').val(id);
-            dataTables.fnFilter();
+            $('#shift-filter-modal').modal('hide');
         }
+
         $scope.reset_filter = function() {
-            $("#short_name").val('');
             $("#name").val('');
             $("#status").val('');
             dataTables.fnFilter();
@@ -187,33 +186,16 @@ app.component('shiftForm', {
         var v = jQuery(form_id).validate({
             ignore: '',
             rules: {
-                'short_name': {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 32,
-                },
                 'name': {
                     required: true,
                     minlength: 3,
-                    maxlength: 128,
-                },
-                'description': {
-                    minlength: 3,
-                    maxlength: 255,
+                    maxlength: 64,
                 }
             },
             messages: {
-                'short_name': {
-                    minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 32 Characters',
-                },
                 'name': {
                     minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 128 Characters',
-                },
-                'description': {
-                    minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 255 Characters',
+                    maxlength: 'Maximum 64 Characters',
                 }
             },
             invalidHandler: function(event, validator) {

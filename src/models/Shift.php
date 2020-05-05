@@ -14,7 +14,7 @@ class Shift extends Model {
 	protected $table = 'shifts';
 	public $timestamps = true;
 	protected $fillable = [
-		["id","company_id","name"],
+		"id","company_id","name",
 	];
 
 	public function getDateOfJoinAttribute($value) {

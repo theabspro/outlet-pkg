@@ -8,7 +8,7 @@
 	app.config(['$routeProvider', function($routeProvider) {
 
 	    $routeProvider.
-	    //Shift
+	    //SHIFTS
 	    when('/outlet-pkg/shift/list', {
 	        template: '<shift-list></shift-list>',
 	        title: 'Shifts',
@@ -27,10 +27,11 @@
 	    });
 	}]);
 
-	//Shifts
+	//SHIFTS
     var shift_list_template_url = "{{asset($outlet_pkg_prefix.'/public/themes/'.$theme.'/outlet-pkg/shift/list.html')}}";
     var shift_form_template_url = "{{asset($outlet_pkg_prefix.'/public/themes/'.$theme.'/outlet-pkg/shift/form.html')}}";
     var shift_card_list_template_url = "{{asset($outlet_pkg_prefix.'/public/themes/'.$theme.'/outlet-pkg/shift/card-list.html')}}";
     var shift_modal_form_template_url = "{{asset($outlet_pkg_prefix.'/public/themes/'.$theme.'/outlet-pkg/partials/shift-modal-form.html')}}";
 </script>
+
 <script type="text/javascript" src="{{asset($outlet_pkg_prefix.'/public/themes/'.$theme.'/outlet-pkg/shift/controller.js')}}"></script>

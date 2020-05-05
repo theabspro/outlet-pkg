@@ -1,8 +1,11 @@
 <?php
 
 namespace Abs\OutletPkg;
+
+use Abs\OutletPkg\Shift;
+use App\ActivityLog;
+use App\Config;
 use App\Http\Controllers\Controller;
-use App\Shift;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -11,24 +14,30 @@ use Illuminate\Http\Request;
 use Validator;
 use Yajra\Datatables\Datatables;
 
-class ShiftController extends Controller {
+class ShiftController extends Controller
+{
+    public function __construct() {
+		$this->data['theme'] = config('custom.admin_theme');
+	}
 
-	public function __construct() {
-		$this->data['theme'] = config('custom.theme');
+	public function getShiftFilter() {
+		$this->data['extras'] = [
+			'status' => [
+				['id' => '', 'name' => 'Select Status'],
+				['id' => '1', 'name' => 'Active'],
+				['id' => '0', 'name' => 'Inactive'],
+			],
+		];
+		return response()->json($this->data);
 	}
 
 	public function getShiftList(Request $request) {
 		$shifts = Shift::withTrashed()
-
 			->select([
 				'shifts.id',
 				'shifts.name',
-				'shifts.code',
-
 				DB::raw('IF(shifts.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
-			->where('shifts.company_id', Auth::user()->company_id)
-
 			->where(function ($query) use ($request) {
 				if (!empty($request->name)) {
 					$query->where('shifts.name', 'LIKE', '%' . $request->name . '%');
@@ -41,27 +50,29 @@ class ShiftController extends Controller {
 					$query->whereNotNull('shifts.deleted_at');
 				}
 			})
+			->where('shifts.company_id', Auth::user()->company_id)
 		;
 
 		return Datatables::of($shifts)
-			->rawColumns(['name', 'action'])
-			->addColumn('name', function ($shift) {
+			
+			->addColumn('status', function ($shift) {
 				$status = $shift->status == 'Active' ? 'green' : 'red';
-				return '<span class="status-indicator ' . $status . '"></span>' . $shift->name;
+				return '<span class="status-indigator ' . $status . '"></span>' . $shift->status;
 			})
 			->addColumn('action', function ($shift) {
+				
 				$img1 = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow.svg');
 				$img1_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow-active.svg');
 				$img_delete = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-default.svg');
 				$img_delete_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-active.svg');
-				$output = '';
+				$action = '';
 				if (Entrust::can('edit-shift')) {
-					$output .= '<a href="#!/outlet-pkg/shift/edit/' . $shift->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
+					$action .= '<a href="#!/outlet-pkg/shift/edit/' . $shift->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
 				}
 				if (Entrust::can('delete-shift')) {
-					$output .= '<a href="javascript:;" data-toggle="modal" data-target="#shift-delete-modal" onclick="angular.element(this).scope().deleteShift(' . $shift->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete . '" onmouseout=this.src="' . $img_delete . '"></a>';
+					$action .= '<a href="javascript:;" data-toggle="modal" data-target="#shift-delete" onclick="angular.element(this).scope().deleteShift(' . $shift->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete . '" onmouseout=this.src="' . $img_delete . '"></a>';
 				}
-				return $output;
+				return $action;
 			})
 			->make(true);
 	}
@@ -76,8 +87,8 @@ class ShiftController extends Controller {
 			$action = 'Edit';
 		}
 		$this->data['success'] = true;
-		$this->data['shift'] = $shift;
 		$this->data['action'] = $action;
+		$this->data['shift'] = $shift;
 		return response()->json($this->data);
 	}
 
@@ -85,26 +96,16 @@ class ShiftController extends Controller {
 		// dd($request->all());
 		try {
 			$error_messages = [
-				'code.required' => 'Short Name is Required',
-				'code.unique' => 'Short Name is already taken',
-				'code.min' => 'Short Name is Minimum 3 Charachers',
-				'code.max' => 'Short Name is Maximum 32 Charachers',
 				'name.required' => 'Name is Required',
 				'name.unique' => 'Name is already taken',
 				'name.min' => 'Name is Minimum 3 Charachers',
-				'name.max' => 'Name is Maximum 191 Charachers',
+				'name.max' => 'Name is Maximum 64 Charachers',
 			];
 			$validator = Validator::make($request->all(), [
-				'code' => [
-					'required:true',
-					'min:3',
-					'max:32',
-					'unique:shifts,code,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
-				],
 				'name' => [
 					'required:true',
 					'min:3',
-					'max:191',
+					'max:64',
 					'unique:shifts,name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 			], $error_messages);
@@ -115,18 +116,25 @@ class ShiftController extends Controller {
 			DB::beginTransaction();
 			if (!$request->id) {
 				$shift = new Shift;
-				$shift->company_id = Auth::user()->company_id;
+				$shift->created_by_id = Auth::user()->id;
+				$shift->created_at = Carbon::now();
+				$shift->updated_at = NULL;
 			} else {
 				$shift = Shift::withTrashed()->find($request->id);
+				$shift->updated_by_id = Auth::user()->id;
+				$shift->updated_at = Carbon::now();
 			}
 			$shift->fill($request->all());
+			$shift->company_id = Auth::user()->company_id;
 			if ($request->status == 'Inactive') {
 				$shift->deleted_at = Carbon::now();
+				$shift->deleted_by_id = Auth::user()->id;
 			} else {
+				$shift->deleted_by_id = NULL;
 				$shift->deleted_at = NULL;
 			}
 			$shift->save();
-
+			
 			DB::commit();
 			if (!($request->id)) {
 				return response()->json([
@@ -150,7 +158,6 @@ class ShiftController extends Controller {
 
 	public function deleteShift(Request $request) {
 		DB::beginTransaction();
-		// dd($request->id);
 		try {
 			$shift = Shift::withTrashed()->where('id', $request->id)->forceDelete();
 			if ($shift) {
@@ -161,26 +168,5 @@ class ShiftController extends Controller {
 			DB::rollBack();
 			return response()->json(['success' => false, 'errors' => ['Exception Error' => $e->getMessage()]]);
 		}
-	}
-
-	public function getShifts(Request $request) {
-		$shifts = Shift::withTrashed()
-			->with([
-				'shifts',
-				'shifts.user',
-			])
-			->select([
-				'shifts.id',
-				'shifts.name',
-				'shifts.code',
-				DB::raw('IF(shifts.deleted_at IS NULL, "Active","Inactive") as status'),
-			])
-			->where('shifts.company_id', Auth::user()->company_id)
-			->get();
-
-		return response()->json([
-			'success' => true,
-			'shifts' => $shifts,
-		]);
 	}
 }
