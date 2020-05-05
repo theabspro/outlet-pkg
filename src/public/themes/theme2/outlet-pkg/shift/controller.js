@@ -8,7 +8,7 @@ app.component('shiftList', {
         $('.master_link').addClass('active').trigger('click');
         self.hasPermission = HelperService.hasPermission;
         if (!self.hasPermission('shifts')) {
-            window.location = "#!/page-permission-denied";
+            window.location = "#!/permission-denied";
             return false;
         }
         self.add_permission = self.hasPermission('add-shift');
@@ -155,8 +155,8 @@ app.component('shiftForm', {
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('add-shift') || !self.hasPermission('edit-shift')) {
-            window.location = "#!/page-permission-denied";
+        if (!self.hasPermission('add-shift') && !self.hasPermission('edit-shift')) {
+            window.location = "#!/permission-denied";
             return false;
         }
         self.angular_routes = angular_routes;
