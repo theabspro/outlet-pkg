@@ -154,6 +154,7 @@ app.component('shiftForm', {
     templateUrl: shift_form_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
+        $("input:text:visible:first").focus();
         self.hasPermission = HelperService.hasPermission;
         if (!self.hasPermission('add-shift') && !self.hasPermission('edit-shift')) {
             window.location = "#!/permission-denied";
