@@ -25,6 +25,10 @@ class Shift extends Model {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
 
+	public function outlet_shift() {
+		return $this->belongsToMany('App\Outlet', 'outlet_shift', 'shift_id', 'outlet_id');
+	}
+
 	public static function createFromObject($record_data) {
 
 		$errors = [];
