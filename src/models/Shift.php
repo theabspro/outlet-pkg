@@ -14,7 +14,7 @@ class Shift extends Model {
 	protected $table = 'shifts';
 	public $timestamps = true;
 	protected $fillable = [
-		"id","company_id","name",
+		"id", "company_id", "name",
 	];
 
 	public function getDateOfJoinAttribute($value) {
@@ -25,7 +25,11 @@ class Shift extends Model {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
 
-	public function outlet_shift() {
+	//issue: naming
+	// public function outlet_shift() {
+	// 	return $this->belongsToMany('App\Outlet', 'outlet_shift', 'shift_id', 'outlet_id');
+	// }
+	public function outletShifts() {
 		return $this->belongsToMany('App\Outlet', 'outlet_shift', 'shift_id', 'outlet_id');
 	}
 
