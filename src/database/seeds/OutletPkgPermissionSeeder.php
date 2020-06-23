@@ -38,6 +38,32 @@ class OutletPkgPermissionSeeder extends Seeder {
 				'display_name' => 'Delete',
 			],
 
+			//OUTLET GROUPS
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'outlet-groups',
+				'display_name' => 'Outlet Groups',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'outlet-groups',
+				'name' => 'add-outlet-group',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'outlet-groups',
+				'name' => 'edit-outlet-group',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'outlet-groups',
+				'name' => 'delete-outlet-group',
+				'display_name' => 'Delete',
+			],
+
 		];
 		Permission::createFromArrays($permissions);
 	}
