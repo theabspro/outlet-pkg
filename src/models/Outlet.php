@@ -3,12 +3,10 @@
 namespace Abs\OutletPkg;
 
 use Abs\HelperPkg\Traits\SeederTrait;
-use App\Company;
-use App\Config;
-use Illuminate\Database\Eloquent\Model;
+use App\BaseModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Outlet extends Model {
+class Outlet extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
 	protected $table = 'outlets';

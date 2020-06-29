@@ -1,11 +1,10 @@
 <?php
-Route::group(['namespace' => 'Abs\OutletPkg\Api', 'middleware' => ['api', 'auth:api']], function () {
-	Route::group(['prefix' => 'api/outlet-pkg'], function () {
-		Route::post('punch/status', 'PunchController@status');
-	});
+Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['api', 'auth:api']], function () {
 
-	Route::group(['prefix' => 'outlet'], function () {
-		$controller = 'Outlet';
-		Route::get('options', $controller . 'Controller@options');
+	Route::group(['prefix' => 'api'], function () {
+		Route::group(['prefix' => 'outlet'], function () {
+			$controller = 'Outlet';
+			Route::get('options', $controller . 'Controller@options');
+		});
 	});
 });
