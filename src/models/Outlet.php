@@ -34,14 +34,14 @@ class Outlet extends BaseModel {
 				],
 			],
 		],
-		'Outlet Code' => [
+		'Code' => [
 			'table_column_name' => 'code',
 			'rules' => [
 				'required' => [
 				],
 			],
 		],
-		'Outlet Name' => [
+		'Name' => [
 			'table_column_name' => 'name',
 			'rules' => [
 				'required' => [
@@ -101,8 +101,8 @@ class Outlet extends BaseModel {
 		$record = [
 			'Company Code' => $record_data->company_code,
 			'Outlet Group Name' => $record_data->outlet_group_name,
-			'Outlet Code' => $record_data->outlet_code,
-			'Outlet Name' => $record_data->outlet_name,
+			'Code' => $record_data->code,
+			'Name' => $record_data->name,
 			'State Code' => $record_data->state_code,
 			'Region Code' => $record_data->region_code,
 			'Address' => $record_data->address,
@@ -135,17 +135,26 @@ class Outlet extends BaseModel {
 		} else {
 			$created_by = $record_data['created_by'];
 		}
+		if (empty($record_data['Code'])) {
+			$errors[] = 'Code is empty';
+		}
 
+		if (count($errors) > 0) {
+			return [
+				'success' => false,
+				'errors' => $errors,
+			];
+		}
 		$record = self::firstOrNew([
 			'company_id' => $company->id,
-			'code' => $record_data['Outlet Code'],
+			'code' => $record_data['Code'],
 		]);
 
 		$result = Self::validateAndFillExcelColumns($record_data, Static::$excelColumnRules, $record);
 		if (!$result['success']) {
 			return $result;
 		}
-		$record->created_by_id = $created_by;
+		$record->created_by = $created_by;
 		$record->save();
 		return [
 			'success' => true,
