@@ -20,17 +20,6 @@ class OutletController extends Controller {
 				'error' => 'Outlet not found',
 			]);
 		}
-		$business = $outlet->businesses()->filterCode($request->businessName)->first();
-		if (!$business) {
-			return response()->json([
-				'success' => false,
-				'error' => 'Business not mapped to outlet',
-			]);
-		}
-		return response()->json([
-			'success' => true,
-			'business' => $business,
-		]);
-
+		return $outlet->getBusiness($request->all());
 	}
 }

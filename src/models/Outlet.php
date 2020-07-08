@@ -160,4 +160,19 @@ class Outlet extends BaseModel {
 			'success' => true,
 		];
 	}
+
+	public function getBusiness($params) {
+		$business = $this->businesses()->filterCode($params['businessName'])->first();
+		if (!$business) {
+			return [
+				'success' => false,
+				'error' => 'Business not mapped to outlet',
+			];
+		}
+		return [
+			'success' => true,
+			'business' => $business,
+		];
+
+	}
 }
