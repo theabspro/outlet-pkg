@@ -10,6 +10,7 @@ class Outlet extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
 	public static $AUTO_GENERATE_CODE = false;
+	public static $HAS_COMPANY = true;
 
 	protected $table = 'outlets';
 	protected $fillable = [
