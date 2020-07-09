@@ -12,10 +12,17 @@ class OutletPkgPermissionSeeder extends Seeder {
 	 */
 	public function run() {
 		$permissions = [
-			//SHIFTS
 			[
 				'display_order' => 99,
 				'parent' => null,
+				'name' => 'outlet-masters',
+				'display_name' => 'Outlet Masters',
+			],
+
+			//SHIFTS
+			[
+				'display_order' => 99,
+				'parent' => 'outlet-masters',
 				'name' => 'shifts',
 				'display_name' => 'Shifts',
 			],
@@ -41,7 +48,7 @@ class OutletPkgPermissionSeeder extends Seeder {
 			//OUTLET GROUPS
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'outlet-masters',
 				'name' => 'outlet-groups',
 				'display_name' => 'Outlet Groups',
 			],
