@@ -176,4 +176,8 @@ class Outlet extends BaseModel {
 		];
 
 	}
+
+	public function scopeFilterIdIn($query, $ids) {
+		$query->whereIn('id', $ids);
+	}
 }
