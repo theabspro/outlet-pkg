@@ -53,5 +53,3 @@
     
 </script>
 
-<script type="text/javascript" src="{{asset($outlet_pkg_prefix.'/public/themes/'.$theme.'/outlet-pkg/shift/controller.js')}}"></script>
-<script type="text/javascript" src="{{asset($outlet_pkg_prefix.'/public/themes/'.$theme.'/outlet-pkg/outlet-group/controller.js')}}"></script>
