@@ -25,5 +25,8 @@ app.factory('OutletSvc', function($q, RequestSvc, $rootScope, $ngBootbox) {
         options: function(params) {
             return RequestSvc.get('/api/' + model + '/options', params);
         },
+        business_outlet: function(params) {
+            return RequestSvc.get('/api/' + model + '/business_outlet', params);
+        }
     };
 });

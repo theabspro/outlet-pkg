@@ -8,7 +8,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['api',
 
 			Route::get('options', $controller . 'Controller@options');
 			Route::post('get-business', $controller . 'Controller@getBusiness');
-
+			Route::get('business_outlet', $controller . 'Controller@business_outlet');
 		});
 	});
 });
