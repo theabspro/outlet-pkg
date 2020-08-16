@@ -71,6 +71,14 @@ class OutletPkgPermissionSeeder extends Seeder {
 				'display_name' => 'Delete',
 			],
 
+			//Business Outlet
+			[
+				'display_order' => 1,
+				'parent' => 'outlet-masters',
+				'name' => 'business-outlet',
+				'display_name' => 'Business Outlet',
+			],
+
 		];
 		Permission::createFromArrays($permissions);
 	}
