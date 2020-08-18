@@ -75,7 +75,7 @@ class OutletPkgPermissionSeeder extends Seeder {
 			[
 				'display_order' => 1,
 				'parent' => 'outlet-masters',
-				'name' => 'business-outlet',
+				'name' => 'business-outlet-form',
 				'display_name' => 'Business Outlet',
 			],
 
